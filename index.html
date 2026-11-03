@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Instituto Técnico Huntington California</title>
+    <style>
+        :root {
+            --navy: #0b2a6f;
+            --yellow: #f5d90a;
+            --bg: #f4f6fa;
+            --ink: #172033;
+            --line: #dbe1eb;
+            --green: #168344;
+            --red: #c83232
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--ink);
+            font: 16px/1.45 system-ui, Arial, sans-serif
+        }
+
+        header {
+            background: var(--navy);
+            color: #fff;
+            padding: 14px max(16px, calc((100% - 1150px)/2));
+            display: flex;
+            gap: 14px;
+            align-items: center
+        }
+
+        header img {
+            width: 74px;
+            height: 74px;
+            object-fit: contain;
+            background: white;
+            border-radius: 50%
+        }
+
+        header h1 {
+            font-size: clamp(17px, 3vw, 24px);
+            margin: 0
+        }
+
+        header p {
+            margin: 3px 0 0;
+            color: #e5eaf7;
+            font-size: 13px
+        }
+
+        main {
+            max-width: 1150px;
+            margin: 20px auto;
+            padding: 0 16px 100px
+        }
+
+        .panel,
+        .card {
+            background: white;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 12px #17203308
+        }
+
+        h2 {
+            margin: 0 0 12px;
+            color: var(--navy);
+            font-size: 21px
+        }
+
+        h3 {
+            margin: 12px 0 8px;
+            color: var(--navy)
+        }
+
+        .muted {
+            color: #657087;
+            font-size: 13px
+        }
+
+        button,
+        input,
+        select {
+            font: inherit
+        }
+
+        button {
+            background: var(--navy);
+            color: #fff;
+            border: 0;
+            border-radius: 9px;
+            padding: 11px 15px;
+            font-weight: 650;
+            cursor: pointer;
+            min-height: 44px
+        }
+
+        button.alt {
+            background: #edf1f9;
+            color: var(--navy);
+            border: 1px solid #d3dcec
+        }
+
+        button.warn {
+            background: #a62323
+        }
+
+        button:disabled {
+            opacity: .5;
+            cursor: not-allowed
+        }
+
+        input,
+        select {
+            border: 1px solid #cbd4e2;
+            border-radius: 8px;
+            padding: 10px;
+            width: 100%;
+            min-height: 43px;
+            background: #fff
+        }
+
+        label {
+            display: block;
+            font-weight: 650;
+            font-size: 13px;
+            margin: 8px 0 4px
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 12px
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px
+        }
+
+        .pill {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 750
+        }
+
+        .paid,
+        .pass {
+            background: #e1f6e9;
+            color: #126b37
+        }
+
+        .debt,
+        .fail {
+            background: #ffe5e5;
+            color: #a42121
+        }
+
+        .pending {
+            background: #fff4cc;
+            color: #805900
+        }
+
+        .nav {
+            position: fixed;
+            z-index: 3;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            background: white;
+            border-top: 1px solid var(--line);
+            padding: 8px 8px env(safe-area-inset-bottom)
+        }
+
+        .nav button {
+            flex: 1;
+            max-width: 220px;
+            padding: 10px 5px;
+            font-size: 13px;
+            min-height: 48px
+        }
+
+        .nav button.active {
+            background: var(--yellow);
+            color: var(--navy)
+        }
+
+        .student {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            text-align: left;
+            color: var(--ink);
+            background: #fff;
+            border: 1px solid var(--line);
+            width: 100%;
+            margin: 7px 0;
+            padding: 13px
+        }
+
+        .student strong {
+            display: block;
+            color: var(--navy)
+        }
+
+        .student small {
+            color: #68748a
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 14px
+        }
+
+        td,
+        th {
+            padding: 9px;
+            border-bottom: 1px solid var(--line);
+            text-align: left;
+            vertical-align: top
+        }
+
+        th {
+            color: var(--navy)
+        }
+
+        .tablewrap {
+            overflow: auto
+        }
+
+        .hidden {
+            display: none !important
+        }
+
+        .notice {
+            padding: 10px 12px;
+            background: #fff6cf;
+            border-radius: 8px;
+            margin: 10px 0
+        }
+
+        .status {
+            padding: 8px;
+            border-radius: 8px;
+            background: #edf1f9;
+            margin: 8px 0
+        }
+
+        .checks label {
+            font-weight: 450
+        }
+
+        .checks input {
+            width: auto;
+            min-height: auto
+        }
+
+        dialog {
+            border: 0;
+            border-radius: 14px;
+            max-width: 700px;
+            width: calc(100% - 24px);
+            max-height: 90vh;
+            overflow: auto;
+            box-shadow: 0 10px 50px #0004
+        }
+
+        dialog::backdrop {
+            background: #06133299
+        }
+
+        .close {
+            float: right
+        }
+
+        @media(max-width:600px) {
+            header {
+                padding: 12px
+            }
+
+            header img {
+                width: 56px;
+                height: 56px
+            }
+
+            main {
+                padding: 0 10px 105px;
+                margin-top: 12px
+            }
+
+            .panel,
+            .card {
+                padding: 13px
+            }
+
+            .nav button {
+                font-size: 11px
+            }
+
+            .student {
+                padding: 12px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header><img src="logo.png" alt="Logo del instituto">
+        <div>
+            <h1>Instituto Técnico Huntington California</h1>
+            <p>Cochabamba · Bolivia · Control académico y pagos (DEMO)</p>
+        </div>
+    </header>
+    <main>
+        <section id="login" class="panel">
+            <h2>Ingreso de administrador</h2>
+            <p class="muted">Demo de un solo administrador. Introduce la clave configurada en Apps Script.</p>
+            <form id="loginForm"><label>Clave</label><input id="clave" type="password" autocomplete="current-password"
+                    required>
+                <div class="actions"><button>Ingresar</button></div>
+            </form>
+            <p id="loginMsg" role="status"></p>
+        </section>
+        <section id="app" class="hidden">
+            <div class="panel">
+                <div class="row"><b id="connection">Conectando…</b><span class="muted" id="yearLabel"></span></div>
+                <div class="actions"><button class="alt" id="reload">↻ Recargar</button><button class="alt"
+                        id="seed">Cargar datos de demostración</button><button class="alt" id="clearDemo">Limpiar datos
+                        demo</button><button class="alt" id="logout">Salir</button></div>
+                <p class="muted">La limpieza demo elimina registros identificados por documento DEMO*. Los pagos/notas
+                    asociados también se retiran.</p>
+            </div>
+            <section id="view"></section>
+        </section>
+    </main>
+    <nav class="nav hidden" id="nav"><button data-page="Estudiantes" class="active">Estudiantes</button><button
+            data-page="Morosos">Morosos</button><button data-page="Avance">Pasar semestre</button><button
+            data-page="Egresados">Egresados</button></nav>
+    <dialog id="dlg"><button class="alt close" id="closeDlg">Cerrar ✕</button>
+        <div id="dlgBody"></div>
+    </dialog>
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbz8CvNoDCl3szA_M8s3sxIjyS4yWX9Q5s8Rm8MXuwRn47vJ5n4R2IEAsZqNiRuwJw-P/exec";
+        const MATERIAS = [
+            [1, "PRD 111", "Anatomía y morfología dentaria"], [1, "PRD 112", "Materiales dentales y laboratorio 1"], [1, "PRD 113", "Tecnología dental"], [1, "PRD 114", "Anatomía humana"], [1, "PRD 115", "Química de materiales dentales"], [1, "PRD 116", "Bioseguridad y ergonomía"], [1, "PRD 117", "Computación"],
+            [2, "PRD 121", "Anatomía y topografía dentaria"], [2, "PRD 122", "Prostodoncia total y laboratorio"], [2, "PRD 123", "Prostodoncia parcial removible en resina y laboratorio"], [2, "PRD 124", "Soporte básico de la vida"], [2, "PRD 125", "Histología general y dental"], [2, "PRD 126", "Inglés técnico"],
+            [3, "PRD 211", "Ortodoncia removible y laboratorio"], [3, "PRD 212", "Oclusión 1 y laboratorio"], [3, "PRD 213", "Materiales cosméticos"], [3, "PRD 214", "Prostodoncia fija 1 y laboratorio"], [3, "PRD 215", "Técnicas de investigación 1"],
+            [4, "PRD 221", "Prostodoncia parcial removible metálica 2 y laboratorio"], [4, "PRD 222", "Ortodoncia fija y laboratorio"], [4, "PRD 223", "Prostodoncia fija 2 y cerámica dental 1 y laboratorio"], [4, "PRD 224", "Salud oral"], [4, "PRD 225", "Deontología legal"],
+            [5, "PRD 311", "Biomateriales dentales 1 y laboratorio"], [5, "PRD 312", "Prostodoncia removible 3, ataches y fresados y laboratorio"], [5, "PRD 313", "Cerámica dental 2 y laboratorio"], [5, "PRD 314", "Diseños y administración de laboratorio dental"], [5, "PRD 315", "Patología bucal"],
+            [6, "PRD 321", "Pasantías en instituciones de convenio"]];
+        let db = {Estudiantes: [], Notas: [], Pagos: []}, page = "Estudiantes", selected = null, filters = {q: "", turno: "", sem: ""}, review = null;
+        const $ = s => document.querySelector(s), esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+        const today = () => new Date().toISOString().slice(0, 10), year = () => String(new Date().getFullYear()), admin = () => sessionStorage.getItem("huntington_key");
+        function byId(id) {return db.Estudiantes.find(s => s.id === id)}
+        function myNotes(id) {return db.Notas.filter(n => n.estudiante === id)}
+        function myPayments(id) {return db.Pagos.filter(p => p.estudiante === id)}
+        function passed(id, c) {return myNotes(id).some(n => n.codigo === c && Number(n.nota) >= 72)}
+        function currentCourses(s) {return MATERIAS.filter(m => m[0] === Number(s.semestre))}
+        function pending(s) {return currentCourses(s).filter(m => !passed(s.id, m[1]))}
+        function payState(s) {let level = Number(s.semestre), yearlyBase = Math.floor((level - 1) / 2) * 2 + 1; return myPayments(s.id).some(p => p.anulado !== "SI" && p.gestion === year() && ((p.tipo === "Semestre" && Number(p.semestre) === level) || (p.tipo === "Anual" && [yearlyBase, yearlyBase + 1].includes(level)))) ? "Pagó" : "Debe"}
+        async function apiGet() {let r = await fetch(API_URL + "?clave=" + encodeURIComponent(admin())); let j = await r.json(); if (j.error) throw Error(j.error === "clave" ? "Clave incorrecta" : "Error al leer"); db = j}
+        async function apiPost(action, table, extra = {}) {let r = await fetch(API_URL, {method: "POST", headers: {"Content-Type": "text/plain;charset=utf-8"}, body: JSON.stringify({clave: admin(), accion: action, tabla: table, ...extra})}); let j = await r.json(); if (j.error) throw Error(j.error); return j}
+        async function refresh() {setStatus("Cargando datos…"); try {await apiGet(); $("#connection").textContent = "Conectado · " + db.Estudiantes.length + " estudiantes"; $("#yearLabel").textContent = "Gestión " + year(); render();} catch (e) {setStatus("Error: " + e.message + " · Revisa API_URL, clave y publicación.");} }
+        function setStatus(t) {$("#connection").textContent = t}
+        $("#loginForm").addEventListener("submit", async e => {e.preventDefault(); if (API_URL.includes("PEGA_AQUI")) {$("#loginMsg").textContent = "Primero reemplaza API_URL en index.html por la URL publicada de Apps Script."; return;} sessionStorage.setItem("huntington_key", $("#clave").value); $("#loginMsg").textContent = ""; $("#login").classList.add("hidden"); $("#app").classList.remove("hidden"); $("#nav").classList.remove("hidden"); await refresh();});
+        $("#reload").onclick = refresh; $("#logout").onclick = () => {sessionStorage.removeItem("huntington_key"); location.reload()};
+        $("#closeDlg").onclick = () => $("#dlg").close(); $("#nav").addEventListener("click", e => {let b = e.target.closest("button[data-page]"); if (!b) return; page = b.dataset.page; selected = null; $("#nav").querySelectorAll("button").forEach(x => x.classList.toggle("active", x === b)); render()});
+        function showDialog(html) {$("#dlgBody").innerHTML = html; $("#dlg").showModal()}
+        function studentsList(which) {let arr = db.Estudiantes.filter(s => which === "Egresados" ? s.estado === "Egresado" : s.estado === "Activo"); if (which === "Morosos") arr = arr.filter(s => payState(s) === "Debe"); let q = filters.q.toLowerCase(); arr = arr.filter(s => (!q || (s.nombre + " " + s.documento).toLowerCase().includes(q)) && (!filters.turno || s.turno === filters.turno) && (!filters.sem || s.semestre === filters.sem)); return arr}
+        function filterUI() {return `<div class="grid"><div><label>Buscar nombre/documento</label><input id="q" value="${esc(filters.q)}" placeholder="Escribe para buscar"></div>${page !== "Egresados" ? `<div><label>Turno</label><select id="turno"><option value="">Todos</option>${["Mañana", "Tarde", "Noche"].map(t => `<option ${filters.turno === t ? "selected" : ""}>${t}</option>`).join("")}</select></div><div><label>Semestre</label><select id="sem"><option value="">Todos</option>${[1, 2, 3, 4, 5, 6].map(n => `<option ${filters.sem === String(n) ? "selected" : ""}>${n}</option>`).join("")}</select></div>` : ""}</div>`}
+        function render() {
+            let root = $("#view"); if (selected) {let s = byId(selected); if (s) {root.innerHTML = profile(s); wireProfile(s); return;} selected = null}
+            if (page === "Avance") {root.innerHTML = advanceUI(); wireAdvance(); return }
+            let arr = studentsList(page); root.innerHTML = `<div class="panel"><h2>${page}</h2>${filterUI()}<p class="muted">${arr.length} resultado(s)</p>${page === "Estudiantes" ? '<button id="newStudent">＋ Nuevo estudiante</button>' : ""}<div id="students">${arr.map(studentCard).join("") || '<p class="muted">No hay registros que coincidan.</p>'}</div></div>`; $("#q").oninput = e => {filters.q = e.target.value; render()}; if ($("#turno")) $("#turno").onchange = e => {filters.turno = e.target.value; render()}; if ($("#sem")) $("#sem").onchange = e => {filters.sem = e.target.value; render()}; $("#students").onclick = e => {let b = e.target.closest("[data-student]"); if (b) {selected = b.dataset.student; render()} }; if ($("#newStudent")) $("#newStudent").onclick = newStudentForm
+        }
+        function studentCard(s) {return `<button class="student" data-student="${esc(s.id)}"><span><strong>${esc(s.nombre)}</strong><small>${esc(s.turno)} · Semestre ${esc(s.semestre)} · Doc. ${esc(s.documento)}</small></span>${s.estado === "Activo" ? `<span class="pill ${payState(s) === "Pagó" ? "paid" : "debt"}">${payState(s)}</span>` : "<span class='pill pass'>Egresado</span>"}</button>`}
+        function newStudentForm() {showDialog(`<h2>Nuevo estudiante</h2><form id="studentForm"><div class="grid">${field("nombre", "Nombre completo", true)}${field("documento", "Documento")} ${field("telefono", "Teléfono")} ${field("tutor", "Tutor")}<div><label>Turno *</label><select name="turno" required><option value="">Elegir</option><option>Mañana</option><option>Tarde</option><option>Noche</option></select></div><div><label>Semestre inicial *</label><select name="semestre" required>${[1, 2, 3, 4, 5, 6].map(n => `<option>${n}</option>`).join("")}</select></div></div><div class="actions"><button>Guardar estudiante</button></div></form>`); $("#studentForm").onsubmit = async e => {e.preventDefault(); let f = Object.fromEntries(new FormData(e.target)); f.estado = "Activo"; f.fecha_cambio = today(); try {await apiPost("add", "Estudiantes", {fila: f}); $("#dlg").close(); selected = null; await refresh()} catch (err) {alert(err.message)} }}
+        function field(name, label, required = false) {return `<div><label>${label}${required ? " *" : ""}</label><input name="${name}" ${required ? "required" : ""}></div>`}
+        function profile(s) {
+            let notes = myNotes(s.id).slice().sort((a, b) => b.fecha.localeCompare(a.fecha)), payments = myPayments(s.id).slice().sort((a, b) => b.fecha.localeCompare(a.fecha)), pend = pending(s), ready = pend.length === 0; return `<div class="panel"><button class="alt" id="back">← Volver</button><h2>${esc(s.nombre)}</h2><p><span class="pill ${s.estado === "Activo" ? (payState(s) === "Pagó" ? "paid" : "debt") : "pass"}">${s.estado === "Activo" ? payState(s) : "Egresado"}</span> ${s.estado === "Activo" ? `<span class="pill ${ready ? "pass" : "pending"}">${ready ? (Number(s.semestre) === 6 ? "Listo para egresar" : "Listo para pasar") : "Le faltan " + pend.length + " materias"}</span>` : ""}</p><div class="grid"><p><b>Documento:</b> ${esc(s.documento)}</p><p><b>Teléfono:</b> ${esc(s.telefono)}</p><p><b>Tutor:</b> ${esc(s.tutor)}</p><p><b>Turno:</b> ${esc(s.turno)}</p><p><b>Semestre:</b> ${esc(s.semestre)}</p><p><b>Estado:</b> ${esc(s.estado)}</p></div>${s.estado === "Activo" ? '<button id="editStudent" class="alt">Editar datos</button>' : ""}
+${s.estado === "Activo" ? `<h3>Materias del semestre actual</h3>${currentCourses(s).map(m => `<p>${esc(m[1])} · ${esc(m[2])} — <span class="pill ${passed(s.id, m[1]) ? "pass" : "pending"}">${passed(s.id, m[1]) ? "Aprobada (mejor: " + Math.max(...myNotes(s.id).filter(n => n.codigo === m[1]).map(n => +n.nota)) + ")" : "Pendiente"}</span></p>`).join("")}<h3>Registrar nota</h3><form id="gradeForm"><div class="grid"><div><label>Materia</label><select name="codigo" required>${MATERIAS.map(m => `<option value="${m[1]}">Sem. ${m[0]} · ${m[1]} · ${esc(m[2])}</option>`).join("")}</select></div><div><label>Fecha</label><input type="date" name="fecha" value="${today()}" required></div><div><label>Nota (0–100)</label><input name="nota" type="number" min="0" max="100" required></div></div><div class="actions"><button>Guardar nota</button></div></form>` : ""}
+<h3>Historial de notas</h3><div class="tablewrap"><table><tr><th>Materia</th><th>Fecha</th><th>Nota</th><th>Resultado</th></tr>${notes.map(n => `<tr><td>${esc(n.codigo)} ${esc(MATERIAS.find(m => m[1] === n.codigo)?.[2] || "")}</td><td>${esc(n.fecha)}</td><td>${esc(n.nota)}</td><td><span class="pill ${+n.nota >= 72 ? "pass" : "fail"}">${+n.nota >= 72 ? "Aprobado" : "Reprobado"}</span></td></tr>`).join("") || "<tr><td colspan=4>Sin notas</td></tr>"}</table></div>
+${s.estado === "Activo" ? `<h3>Pagos</h3><p>Estado actual: <span class="pill ${payState(s) === "Pagó" ? "paid" : "debt"}">${payState(s)}</span></p><form id="payForm"><div class="grid"><div><label>Tipo</label><select name="tipo"><option>Semestre</option><option>Anual</option></select></div><div><label>Fecha</label><input name="fecha" type="date" value="${today()}" required></div></div><p class="muted">El pago queda asociado al semestre actual (${s.semestre}) y gestión ${year()}.</p><button>Registrar pago</button></form>` : ""}<div class="tablewrap"><table><tr><th>Gestión</th><th>Tipo</th><th>Semestre</th><th>Fecha</th><th>Estado / acción</th></tr>${payments.map(p => `<tr><td>${esc(p.gestion)}</td><td>${esc(p.tipo)}</td><td>${esc(p.semestre)}</td><td>${esc(p.fecha)}</td><td>${p.anulado === "SI" ? `<span class="pill fail">Anulado: ${esc(p.motivo)}</span>` : `<span class="pill pass">Activo</span> <button class="warn" data-cancel="${esc(p.id)}">Anular</button>`}</td></tr>`).join("") || "<tr><td colspan=5>Sin pagos</td></tr>"}</table></div></div>`
+        }
+
+        function wireProfile(s) {
+            $("#back").onclick = () => {selected = null; render()}; if ($("#editStudent")) $("#editStudent").onclick = () => {showDialog(`<h2>Editar estudiante</h2><form id="editForm"><div class="grid">${["nombre", "documento", "telefono", "tutor"].map(k => `<div><label>${k}</label><input name="${k}" value="${esc(s[k])}"></div>`).join("")}<div><label>Turno</label><select name="turno">${["Mañana", "Tarde", "Noche"].map(t => `<option ${s.turno === t ? "selected" : ""}>${t}</option>`)}</select></div><div><label>Semestre</label><select name="semestre">${[1, 2, 3, 4, 5, 6].map(n => `<option ${+s.semestre === n ? "selected" : ""}>${n}</option>`)}</select></div></div><button>Guardar cambios</button></form>`); $("#editForm").onsubmit = async e => {e.preventDefault(); try {await apiPost("upd", "Estudiantes", {id: s.id, fila: Object.fromEntries(new FormData(e.target))}); $("#dlg").close(); await refresh()} catch (er) {alert(er.message)} }};
+            if ($("#gradeForm")) $("#gradeForm").onsubmit = async e => {e.preventDefault(); let f = Object.fromEntries(new FormData(e.target)); let score = Number(f.nota); if (!Number.isInteger(score) || score < 0 || score > 100) return alert("La nota debe ser un número entero de 0 a 100."); try {await apiPost("add", "Notas", {fila: {estudiante: s.id, ...f, nota: String(score)}}); await refresh()} catch (er) {alert(er.message)} };
+            if ($("#payForm")) $("#payForm").onsubmit = async e => {e.preventDefault(); let f = Object.fromEntries(new FormData(e.target)); try {await apiPost("add", "Pagos", {fila: {estudiante: s.id, gestion: year(), tipo: f.tipo, semestre: s.semestre, fecha: f.fecha, anulado: "NO", motivo: ""}}); await refresh()} catch (er) {alert(er.message)} };
+            $("#dlgBody").onclick = async e => {let b = e.target.closest("[data-cancel]"); if (!b) return; let reason = prompt("Motivo obligatorio para anular este pago:"); if (!reason || !reason.trim()) return alert("La anulación requiere un motivo."); let p = db.Pagos.find(x => x.id === b.dataset.cancel); try {await apiPost("upd", "Pagos", {id: p.id, fila: {anulado: "SI", motivo: reason.trim()}}); await refresh()} catch (er) {alert(er.message)} }
+        }
+        function advanceUI() {let active = db.Estudiantes.filter(s => s.estado === "Activo"), prom = [], stuck = [], grads = []; active.forEach(s => {let ps = pending(s); if (+s.semestre === 6 && passed(s.id, "PRD 321")) grads.push(s); else if (!ps.length && +s.semestre < 6) prom.push(s); else stuck.push({s, ps})}); return `<div class="panel"><h2>Revisión de cambio de semestre</h2><p class="muted">Revisa la propuesta y marca qué estudiantes deseas mover. Los casos se calculan según notas registradas.</p><button id="review">Revisar cambio de semestre</button><div id="reviewResult">${review ? reviewMarkup(prom, stuck, grads) : ""}</div></div>`}
+        function reviewMarkup(prom, stuck, grads) {let group = (title, arr, kind) => `<h3>${title} (${arr.length})</h3><div class="checks">${arr.map(s => `<label><input type="checkbox" data-move="${s.id}" data-kind="${kind}" checked> ${esc(s.nombre)} · Semestre ${s.semestre}</label>`).join("<br>") || '<p class="muted">Ninguno</p>'}</div>`; return group("Pasan", prom, "pass") + `<h3>No pasan (${stuck.length})</h3>${stuck.map(({s, ps}) => `<p><b>${esc(s.nombre)}</b> · Sem. ${s.semestre}: ${ps.map(m => esc(m[1])).join(", ") || "Revisar expediente"}</p>`).join("")}` + group("Egresan", grads, "grad") + `<div class="actions"><button id="confirmMove">Confirmar cambio</button></div>`}
+        function wireAdvance() {$("#review").onclick = () => {review = true; render()}; if (!review) return; let active = db.Estudiantes.filter(s => s.estado === "Activo"), prom = active.filter(s => +s.semestre < 6 && !pending(s).length), stuck = active.filter(s => !((+s.semestre < 6 && !pending(s).length) || (+s.semestre === 6 && passed(s.id, "PRD 321")))), grads = active.filter(s => +s.semestre === 6 && passed(s.id, "PRD 321")); $("#reviewResult").innerHTML = reviewMarkup(prom, stuck, grads); $("#confirmMove").onclick = async () => {let chosen = [...document.querySelectorAll("[data-move]:checked")], changes = chosen.map(c => {let s = byId(c.dataset.move); return {id: s.id, fila: {...(c.dataset.kind === "grad" ? {estado: "Egresado"} : {semestre: String(+s.semestre + 1)}), fecha_cambio: today()}}}); if (!changes.length) return alert("No seleccionaste movimientos."); if (!confirm(`Confirmar ${changes.filter(x => x.fila.semestre).length} avance(s) y ${changes.filter(x => x.fila.estado).length} egreso(s)?`)) return; try {await apiPost("updmany", "Estudiantes", {filas: changes}); review = null; page = "Estudiantes"; selected = null; await refresh()} catch (er) {alert(er.message)} }}
+        $("#seed").onclick = async () => {if (db.Estudiantes.length) return alert("Solo se permite cargar datos demo si no hay estudiantes."); if (!confirm("Crear 40 estudiantes ficticios, con notas y pagos de demostración?")) return; let people = Array.from({length: 40}, (_, i) => ({nombre: ["Adriana Rojas", "Marco Flores", "Daniela Vargas", "Luis Quispe", "Camila Torrico", "Bruno Arce", "Valeria Rocha", "Diego Molina"][i % 8] + " " + (i + 1), documento: "DEMO" + String(i + 1).padStart(3, "0"), telefono: "700000" + String(i).padStart(3, "0"), tutor: "Tutor demo " + (i + 1), turno: ["Mañana", "Tarde", "Noche"][i % 3], semestre: String(i % 6 + 1), estado: "Activo", fecha_cambio: today()})); try {let resp = await apiPost("addmany", "Estudiantes", {filas: people}); let created = db; await apiGet(); let notes = [], payments = []; db.Estudiantes.filter(s => /^DEMO/.test(s.documento)).forEach((s, i) => {let course = currentCourses(s); course.forEach((m, j) => {if (+s.semestre === 6 && m[1] === "PRD 321" && i % 2 === 0 || j % 4 !== 0) notes.push({estudiante: s.id, codigo: m[1], fecha: today(), nota: String(76 + (i + j) % 25)}); else if (j % 4 === 0 && i % 5 === 0) notes.push({estudiante: s.id, codigo: m[1], fecha: today(), nota: "60"});}); if (+s.semestre > 1) {MATERIAS.filter(m => m[0] < +s.semestre).forEach(m => notes.push({estudiante: s.id, codigo: m[1], fecha: today(), nota: "82"}))} if (i % 3 !== 0) payments.push({estudiante: s.id, gestion: year(), tipo: i % 2 ? "Semestre" : "Anual", semestre: s.semestre, fecha: today(), anulado: "NO", motivo: ""});}); if (notes.length) await apiPost("addmany", "Notas", {filas: notes}); if (payments.length) await apiPost("addmany", "Pagos", {filas: payments}); await refresh(); alert("Datos de demostración cargados.")} catch (e) {alert("No se pudo cargar demo: " + e.message)} };
+        $("#clearDemo").onclick = async () => {
+            let demos = db.Estudiantes.filter(s => /^DEMO/.test(s.documento)); if (!demos.length) return alert("No hay estudiantes demo."); if (!confirm(`Retirar ${demos.length} estudiante(s) demo, sus notas y pagos? Esto elimina filas de demostración de las hojas.`)) return; try { // La API solo actualiza; retiramos con limpieza explícita vía acción especial documentada abajo.
+                await apiPost("cleandemo", "Estudiantes", {}); await refresh(); alert("Datos demo limpiados.")
+            } catch (e) {alert("La limpieza requiere la versión de Code.gs con soporte cleandemo: " + e.message)}
+        };
+        const oldRender = render;
+        function boot() {if (admin()) {$("#login").classList.add("hidden"); $("#app").classList.remove("hidden"); $("#nav").classList.remove("hidden"); refresh()} }
+        boot();
+    </script>
+</body>
+
+</html>

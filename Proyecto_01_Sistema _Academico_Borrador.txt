@@ -1,0 +1,151 @@
+Guía de prompts para que otra IA construya tu sistema (costruir el sistema guiados por ia)
+
+Hice 9 pasos. El primero (Paso 0) es el contexto que la IA necesita saber siempre. Los demás se pegan uno por uno, y no pasas al siguiente hasta que el anterior funcione pedazo de animal.
+
+/////////    Cómo usar esta guía      ///////////
+Abre un chat nuevo con la IA que vayas a usar. Una que genere código bien, como Claude, ChatGPT o Gemini.
+Pega el Paso 0 primero y luego el Paso 1. En el mismo chat, sigue con los demás.
+Prueba cada paso antes de continuar. Si algo falla, usa el prompt de errores del final.
+Si el chat se llena o la IA se queda sin espacio, abre uno nuevo y usa el prompt de continuación del final.
+Sube también el logo del instituto en el Paso 3.
+
+
+
+----------Paso 0: Contexto del proyecto (pégalo siempre primero)
+Actúa como desarrollador web senior. Voy a pedirte que construyas, por pasos, un sistema de control de pagos y notas para un instituto técnico superior de prótesis dental en Cochabamba, Bolivia ("Instituto Técnico Huntington California"). Es una DEMO con datos ficticios, de un solo administrador. Escribe en español (los textos de la interfaz también) y explícame todo con lenguaje claro, sin tecnicismos innecesarios.
+
+ARQUITECTURA (obligatoria, sin cambiarla)
+- Frontend: UN solo archivo index.html con HTML, CSS y JavaScript puro (sin frameworks, sin instalar nada). Debe verse bien en celular y computador.
+- Backend: Google Apps Script publicado como aplicación web, que lee y escribe en un Google Sheets.
+- Base de datos: Google Sheets con 3 pestañas: Estudiantes, Notas, Pagos. Las materias NO van en la hoja: van dentro del index.html.
+- Publicación: el index.html se sube a Netlify (hosting estático gratis).
+- Solo hay UN usuario administrador, protegido por una clave simple.
+
+DATOS (nombres de columnas exactos, todo guardado como texto en la hoja)
+- Estudiantes: id, nombre, documento, telefono, tutor, turno (Mañana/Tarde/Noche), semestre (1 a 6), estado (Activo/Egresado), fecha_cambio
+- Notas: id, estudiante (id del estudiante), codigo (ej. "PRD 111"), fecha (AAAA-MM-DD), nota (0 a 100)
+- Pagos: id, estudiante, gestion (año, ej. 2026), tipo (Semestre/Anual), semestre (1 a 6), fecha, anulado (SI/NO), motivo
+
+PLAN DE ESTUDIOS (29 materias, 6 semestres; el código es "PRD " + número)
+Semestre 1: 111 Anatomía y morfología dentaria; 112 Materiales dentales y laboratorio 1; 113 Tecnología dental; 114 Anatomía humana; 115 Química de materiales dentales; 116 Bioseguridad y ergonomía; 117 Computación.
+Semestre 2: 121 Anatomía y topografía dentaria; 122 Prostodoncia total y laboratorio; 123 Prostodoncia parcial removible en resina y laboratorio; 124 Soporte básico de la vida; 125 Histología general y dental; 126 Inglés técnico.
+Semestre 3: 211 Ortodoncia removible y laboratorio; 212 Oclusión 1 y laboratorio; 213 Materiales cosméticos; 214 Prostodoncia fija 1 y laboratorio; 215 Técnicas de investigación 1.
+Semestre 4: 221 Prostodoncia parcial removible metálica 2 y laboratorio; 222 Ortodoncia fija y laboratorio; 223 Prostodoncia fija 2 y cerámica dental 1 y laboratorio; 224 Salud oral; 225 Deontología legal.
+Semestre 5: 311 Biomateriales dentales 1 y laboratorio; 312 Prostodoncia removible 3, ataches y fresados y laboratorio; 313 Cerámica dental 2 y laboratorio; 314 Diseños y administración de laboratorio dental; 315 Patología bucal.
+Semestre 6: 321 Pasantías en instituciones de convenio.
+
+REGLAS DE NEGOCIO (no las cambies)
+1. Pagos: el sistema NO maneja montos. Solo dice "Pagó" o "Debe".
+2. Un estudiante "Pagó" si existe un pago con anulado="NO", de la gestión (año) actual, que cubra su semestre actual. Un pago tipo "Semestre" cubre solo ese semestre. Un pago tipo "Anual" cubre los dos semestres de ese año de carrera (1-2, 3-4, 5-6).
+3. "Pagó/Debe" se CALCULA, nunca se guarda a mano.
+4. Los pagos nunca se borran: se anulan con un motivo obligatorio.
+5. Una materia está APROBADA si el estudiante tiene al menos una nota de 72 o más en ella. Con menos de 72 está reprobada. Puede haber varias notas por materia (si la repite).
+6. Materias pendientes de un estudiante = materias de su semestre actual en las que no tiene ninguna nota de 72 o más.
+7. Un estudiante pasa al siguiente semestre solo si no tiene materias pendientes. Si le falta alguna, se queda y solo repite esa.
+8. Al aprobar PRD 321 en el semestre 6, el estudiante pasa a estado "Egresado" y sale de las listas activas, pero sus datos y notas se conservan.
+9. Los egresados no aparecen en la lista de morosos.
+
+DISEÑO
+- Colores del instituto: azul marino (#0B2A6F aprox.) y amarillo (#F5D90A aprox.), con fondo claro. Estilo limpio, clínico y legible.
+- Cabecera con el logo y el nombre "Instituto Técnico Huntington California · Cochabamba".
+- Botones grandes y tocables en celular. Etiqueta verde "Pagó", roja "Debe".
+
+Responde solo "Entendido" y espera mi siguiente instrucción. No escribas código todavía.
+--------------------------Paso 1: Script de Google (el backend)
+Paso 1: Escribe el archivo Code.gs completo para Google Apps Script, ligado a una hoja de Google Sheets.
+
+Requisitos:
+- Una constante CLAVE al inicio (texto que yo cambiaré).
+- Si las pestañas Estudiantes, Notas o Pagos no existen, créalas automáticamente con los encabezados exactos del Paso 0 y con todo el formato de columnas como texto plano (para que Sheets no convierta fechas ni números).
+- doGet(e): recibe ?clave=...; si es incorrecta devuelve {"error":"clave"}; si es correcta devuelve JSON con las tres tablas: {Estudiantes:[...], Notas:[...], Pagos:[...]}, cada fila como objeto con todos sus valores como texto.
+- doPost(e): recibe un JSON en el cuerpo (enviado como text/plain para evitar problemas de CORS) con: clave, accion, tabla, fila, id.
+  * accion "add": agrega una fila nueva y genera un id único corto; devuelve el id.
+  * accion "upd": busca la fila por id y actualiza solo los campos enviados.
+  * accion "addmany": agrega varias filas a la vez (lista "filas"), para cargar datos de demo y para el cambio masivo de semestre.
+  * accion "updmany": actualiza varias filas a la vez (lista de {id, fila}).
+  * Usa LockService para evitar escrituras simultáneas.
+- Ninguna acción borra filas.
+- Todas las respuestas en JSON con ContentService.
+
+Luego explícame paso a paso, para alguien sin experiencia: cómo crear la hoja de Google, abrir Extensiones > Apps Script, pegar el código, cambiar la CLAVE, publicar con Implementar > Nueva implementación > Aplicación web (ejecutar como "yo", acceso "cualquier persona"), autorizar los permisos y copiar la URL final. Dime también que cada vez que cambie el código debo crear una nueva versión de la implementación.
+
+Prueba: abre la URL del script con ?clave=TU_CLAVE al final. Debes ver un texto JSON con las tres tablas vacías.
+
+--------------------------Paso 2: Probar la conexión
+Paso 2: Dame un archivo prueba.html mínimo (una sola página) con tres botones: "Leer datos", "Agregar estudiante de prueba" y "Actualizar el estudiante de prueba". Debe conectarse a la URL de mi Apps Script (una constante que yo reemplazaré) y mostrar en pantalla la respuesta cruda del servidor. Usa fetch; para POST usa el encabezado Content-Type "text/plain". Explícame cómo abrirlo y qué debería ver si todo funciona. Incluye los errores más comunes (clave incorrecta, permisos, URL vieja) y cómo solucionarlos.
+
+Prueba: al agregar un estudiante debe aparecer una fila en tu hoja de Drive. Si esto falla, arréglalo antes de seguir.
+
+Paso 3: Estructura, login y diseño
+Paso 3: Crea la base de index.html (un solo archivo) con:
+- Constante API_URL (que yo reemplazaré) y manejo de la clave de administrador: pantalla de inicio de sesión con un campo de contraseña; al entrar, guarda la clave solo en sessionStorage y carga todos los datos con GET. Si la clave es incorrecta o hay error de conexión, muestra un mensaje claro.
+- Los datos cargados se guardan en variables en memoria, y hay una función para recargar y volver a dibujar la pantalla después de cada cambio.
+- Las 29 materias del plan de estudios dentro del archivo, como lista con semestre, código y nombre.
+- Diseño con los colores del instituto (azul marino y amarillo), cabecera con el logo adjunto y el nombre del instituto. Para el logo, usa una etiqueta img que apunte a "logo.png" ubicado en la misma carpeta, y dime que debo guardar ese archivo junto al index.html.
+- Menú de navegación inferior (fácil de tocar en celular) con 4 secciones: Estudiantes, Morosos, Pasar de semestre, y Egresados. Por ahora las secciones pueden estar vacías.
+- Diseño responsive, textos en español, estados de "cargando" y de error.
+
+Explícame brevemente cómo está organizado el código para que yo pueda ubicar cada parte.
+
+(Sube la imagen del logo en este paso.)
+
+---------------------------Paso 4: Estudiantes (lista, búsqueda y ficha)
+Paso 4: Sobre el index.html anterior, implementa la sección Estudiantes:
+- Lista de estudiantes con estado "Activo" (los egresados no aparecen aquí), con nombre, turno y semestre.
+- Buscador instantáneo por nombre o documento.
+- Filtros por turno (Mañana/Tarde/Noche) y por semestre (1 a 6).
+- Contador de resultados.
+- Botón "Nuevo estudiante" con un formulario (nombre, documento, teléfono, tutor, turno, semestre inicial). Al guardar, crea el registro con estado "Activo" y refresca la lista.
+- Al tocar un estudiante se abre su ficha (ventana o pantalla) con sus datos. Por ahora la ficha solo muestra los datos; el estado de pago, las notas y los pagos se agregan en los siguientes pasos.
+- Opción para editar los datos básicos del estudiante.
+Valida que nombre, turno y semestre sean obligatorios. Entrega el archivo index.html completo y actualizado.
+---------------------------Paso 5: Pagos y estado “Pagó / Debe”
+Paso 5: Agrega la lógica y la interfaz de pagos al index.html:
+- Función que calcula si un estudiante "Pagó" o "Debe" según las reglas 1 a 4 del Paso 0 (pago activo, de la gestión actual tomada de la fecha de hoy, que cubra su semestre actual; el pago Anual cubre los dos semestres de su año de carrera).
+- Etiqueta verde "Pagó" o roja "Debe" en cada tarjeta de la lista y en la ficha.
+- En la ficha: lista de pagos del estudiante (tipo, semestre, fecha, y si está anulado con su motivo) y botón "Registrar pago" con tipo (Semestre/Anual) y fecha (hoy por defecto). El semestre del pago es el semestre actual del estudiante.
+- Botón "Anular" en cada pago activo, que pide un motivo obligatorio. No existe ninguna opción para borrar pagos.
+- Después de cada acción, recargar datos y redibujar.
+Entrega el archivo completo y actualizado, y una lista corta de casos que debo probar (pago de semestre, pago anual en semestre par e impar, anulación, estudiante sin pagos).
+---------------------------Paso 6: Notas y avance académico
+Paso 6: Agrega notas y avance académico al index.html:
+- En la ficha del estudiante: formulario "Registrar nota" con materia (lista desplegable de las 29, mostrando código y nombre, agrupadas por semestre), fecha (hoy por defecto) y nota (0 a 100, validada).
+- Lista de notas del estudiante, cada una con "Aprobado" (72 o más) o "Reprobado".
+- Sección "Materias del semestre actual": cada materia del semestre del estudiante con su estado: Aprobada (con la mejor nota) o Pendiente.
+- Etiqueta en la ficha: "Listo para pasar" si no tiene materias pendientes, o "Le faltan N materias" en caso contrario.
+- Si el estudiante está en semestre 6 y aprueba PRD 321, mostrar "Listo para egresar".
+Las reglas son las 5 a 8 del Paso 0. Entrega el archivo completo actualizado y casos de prueba (materia reprobada y luego aprobada, nota 71 vs 72, estudiante con todo aprobado).
+---------------------------Paso 7: Morosos
+Paso 7: Implementa la sección Morosos del index.html: lista de estudiantes activos cuyo estado es "Debe", con filtros por turno y por semestre, buscador por nombre y un contador. Los egresados no aparecen. Al tocar un estudiante, abre su ficha. Entrega el archivo completo actualizado.
+---------------------------Paso 8: Pasar de semestre y egresados
+Paso 8: Implementa la sección "Pasar de semestre" y la de Egresados del index.html:
+- Botón "Revisar cambio de semestre", con filtros opcionales por turno y semestre.
+- Muestra dos listas: "Pasan" (activos sin materias pendientes en su semestre actual, excepto los de semestre 6) y "No pasan" (con la lista de materias pendientes de cada uno). Los de semestre 6 con PRD 321 aprobada aparecen en una tercera lista: "Egresan".
+- Cada estudiante de "Pasan" y "Egresan" tiene una casilla marcada por defecto que puedo desmarcar para dejarlo sin mover.
+- Botón "Confirmar cambio" con mensaje de confirmación que indique cuántos pasan y cuántos egresan. Al confirmar, usa la acción "updmany" del script: los que pasan suben un semestre, los que egresan cambian a estado "Egresado", y a todos se les guarda la fecha de hoy en fecha_cambio. Los que no pasan no se tocan.
+- Sección Egresados: lista de egresados con buscador y, al tocarlos, su ficha con todas sus notas (solo lectura).
+- Como el estado Pagó/Debe depende del semestre, los que pasan aparecerán como "Debe" automáticamente. No hace falta código extra para eso.
+Entrega el archivo completo actualizado y casos de prueba.
+---------------------------Paso 9: Datos ficticios precargados
+Paso 9: Agrega al index.html un botón "Cargar datos de demostración" (visible solo si no hay estudiantes) que cree, usando "addmany", unos 40 estudiantes ficticios con nombres bolivianos inventados, repartidos en los 3 turnos y los 6 semestres (varios por semestre), con documentos y teléfonos falsos. Incluye también pagos y notas coherentes con estos casos de prueba:
+- Estudiantes que pagaron el semestre y otros que pagaron el año.
+- Estudiantes que deben.
+- Un pago anulado con motivo.
+- Estudiantes con todas las materias de su semestre aprobadas (listos para pasar).
+- Estudiantes con una o dos materias reprobadas (notas menores a 72).
+- Una materia reprobada y luego aprobada.
+- Al menos 2 estudiantes de semestre 6 con PRD 321 aprobada y otros 2 sin ella.
+- Notas de los semestres anteriores aprobadas para quienes estén en semestres altos.
+Las notas aprobadas van de 72 a 100. Usa fechas dentro del año actual. Deja un botón "Borrar datos de demostración" que anule o limpie solo los datos marcados como demo (por ejemplo, con un documento que empiece con "DEMO"), sin tocar datos que yo agregue. Explícame cómo funciona la limpieza.
+----------------------------Paso 10: Pruebas, pulido y publicación
+Paso 10: Revisa todo el index.html y:
+1. Haz una lista de comprobación con todo lo que debo probar, en orden (login, crear estudiante, pagos, anulación, notas, pendientes, morosos, cambio de semestre, egresados, datos de demo), y qué resultado esperado debo ver en cada caso.
+2. Revisa si hay errores o reglas del Paso 0 que no se estén cumpliendo, y corrígelos.
+3. Mejora la experiencia en celular: tamaños de botones, formularios, tablas que no se desborden.
+4. Escribe una guía para publicar en Netlify desde cero: crear cuenta, arrastrar la carpeta (index.html + logo.png), obtener el enlace, y cómo actualizar el sitio después de hacer cambios.
+5. Dime, de forma honesta, qué limitaciones tiene esta demo: seguridad (la clave está en el sistema), velocidad, que Google Sheets no es una base de datos real, y qué cambiaría si luego se usa con datos reales.
+Entrega el archivo final completo.
+--------------------------Prompt para cuando algo falla (úsalo cuando sea necesario)
+Tengo un error. Esto es lo que hice: [describe el paso y qué tocaste]. Esto es lo que esperaba: [lo esperado]. Esto es lo que pasó: [lo que viste]. Este es el mensaje de error exacto (cópialo de la consola del navegador con F12): [pégalo aquí]. Explícame primero qué causa el error en palabras simples, y luego dame solo la parte del código que debo cambiar, indicando dónde ponerla. No me reescribas el archivo completo, a menos que sea imprescindible.
+-------------------------Prompt para continuar en un chat nuevo (si el anterior se llena)
+Estoy continuando un proyecto empezado en otro chat. Te pego primero el contexto del proyecto (Paso 0) y luego mi index.html actual y mi Code.gs actual. Ya completé hasta el Paso [N]. Léelos con atención, resume en 5 líneas lo que ya hace el sistema y espera mi instrucción para el siguiente paso. No cambies nada de lo que ya funciona. [Pega aquí el Paso 0, el index.html y el Code.gs]

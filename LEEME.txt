@@ -1,0 +1,47 @@
+INSTITUTO TÉCNICO HUNTINGTON CALIFORNIA — DEMO
+================================================
+
+CONTENIDO
+- index.html: interfaz responsive y módulos académicos/pagos.
+- logo.png: logo entregado.
+- Code.gs: backend para Apps Script.
+
+PUESTA EN MARCHA
+1. Crea una hoja de cálculo nueva en Google Sheets.
+2. En Extensiones > Apps Script, reemplaza el contenido del editor por Code.gs.
+3. Cambia CLAVE por una clave demo que tú definas.
+4. Guarda y ejecuta una vez la función preparar_ (si el editor no permite ejecutarla por el sufijo, ejecuta doGet con autorización o usa la función desde el selector); concede permisos.
+5. Implementar > Nueva implementación > Aplicación web. Ejecutar como: Yo. Quién tiene acceso: Cualquier persona. Implementa y copia la URL /exec.
+6. En index.html busca API_URL y sustituye PEGA_AQUI_LA_URL_DE_IMPLEMENTACION_APPS_SCRIPT por esa URL exacta.
+7. Cada vez que modifiques Code.gs: Implementar > Administrar implementaciones > Editar > Nueva versión > Implementar.
+8. Coloca index.html y logo.png en una carpeta y súbela a Netlify (deploy manual/arrastrar carpeta o archivos). Abre la URL publicada.
+
+IMPORTANTE: crear/validar encabezados
+Code.gs llama preparar_ automáticamente y crea pestañas Estudiantes, Notas y Pagos con encabezados requeridos. Mantén el nombre de la pestaña y orden de columnas.
+
+PRUEBAS RECOMENDADAS
+- Acceso: clave correcta e incorrecta.
+- Crear, buscar, filtrar y editar un estudiante.
+- Registrar pago de semestre y anual; revisar cobertura para semestres consecutivos.
+- Anular pago: debe exigir motivo; el registro queda identificado como anulado.
+- Registrar nota 71 (reprobado) y 72 (aprobado).
+- Repetir materia y verificar que una nota >=72 la acredita.
+- Revisar materias pendientes, morosos y propuesta de avance.
+- Confirmar avance y egreso; comprobar fecha_cambio.
+- Cargar demo solo con hoja sin estudiantes y luego limpiar demo.
+- Abrir en celular y escritorio.
+
+ALCANCES Y AVISOS
+- Es una DEMO; no almacenar datos personales reales ni usar para gestión oficial.
+- La clave simple y su envío desde el navegador NO son seguridad adecuada para datos reales. Apps Script expuesto como “cualquier persona” y frontend público hacen que esta solución sea demostrativa.
+- Sheets puede sufrir límites de concurrencia, errores de edición y demoras. La lógica depende del reloj local del navegador para gestión y fechas.
+- La acción de limpieza retira filas demo de estudiantes, notas y pagos; solo debe usarse con información ficticia.
+- Datos demo son generados de manera ilustrativa y pueden requerir revisión de casos; comprueba cuidadosamente las situaciones especiales antes de presentarla.
+- Para producción: autenticación real con roles, validación de permisos en servidor, auditoría, copias de seguridad, política de privacidad y base de datos dedicada.
+
+DETALLE DE REGLAS
+- El sistema no maneja montos monetarios.
+- “Pagó/Debe” se calcula con pagos no anulados de la gestión actual.
+- El pago anual cubre el par de semestres del año de carrera: 1–2, 3–4 o 5–6.
+- Aprobación = nota 72 o más; pendientes son materias del semestre vigente sin nota aprobatoria.
+- Egresado no aparece en la lista activa ni de morosos.
